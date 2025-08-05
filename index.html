@@ -1,19 +1,1170 @@
-<!doctype html>
-<html>
-	<head>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width" />
-		<title>My static Space</title>
-		<link rel="stylesheet" href="style.css" />
-	</head>
-	<body>
-		<div class="card">
-			<h1>Welcome to your static Space!</h1>
-			<p>You can modify this app directly by editing <i>index.html</i> in the Files and versions tab.</p>
-			<p>
-				Also don't forget to check the
-				<a href="https://huggingface.co/docs/hub/spaces" target="_blank">Spaces documentation</a>.
-			</p>
-		</div>
-	</body>
-</html>
+Voici une application complète de gestion d'établissement scolaire pour l'université EMEDIA avec toutes les fonctionnalités demandées :
+
+```html
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EMEDIA - Gestion Scolaire</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .sidebar {
+            transition: all 0.3s ease;
+        }
+        .sidebar-collapsed {
+            width: 70px;
+        }
+        .sidebar-collapsed .nav-text {
+            display: none;
+        }
+        .sidebar-collapsed .logo-text {
+            display: none;
+        }
+        .sidebar-collapsed .nav-item {
+            justify-content: center;
+        }
+        .content {
+            transition: margin-left 0.3s ease;
+        }
+        .content-expanded {
+            margin-left: 250px;
+        }
+        .content-collapsed {
+            margin-left: 70px;
+        }
+        .file-upload {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+        }
+        .file-upload input[type="file"] {
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+        }
+        .calendar-day {
+            transition: all 0.2s;
+        }
+        .calendar-day:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .has-event {
+            background-color: #EFF6FF;
+            border-left: 4px solid #3B82F6;
+        }
+        .grade-cell {
+            transition: all 0.2s;
+        }
+        .grade-cell:hover {
+            background-color: #F3F4F6;
+        }
+        .avatar-upload {
+            position: relative;
+            max-width: 150px;
+        }
+        .avatar-upload .avatar-preview {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background-size: cover;
+            background-position: center;
+            border: 3px solid #E5E7EB;
+        }
+        .avatar-upload .upload-btn {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: white;
+            border-radius: 50%;
+            padding: 5px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans">
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar -->
+        <div class="sidebar bg-blue-800 text-white w-64 flex-shrink-0 flex flex-col" id="sidebar">
+            <div class="p-4 flex items-center">
+                <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center mr-3">
+                    <i class="fas fa-graduation-cap text-blue-800 text-xl"></i>
+                </div>
+                <span class="logo-text font-bold text-xl">EMEDIA</span>
+            </div>
+            <div class="flex-grow overflow-y-auto">
+                <div class="px-4 py-2">
+                    <div class="text-xs uppercase text-blue-200 mb-2">Menu Principal</div>
+                    <ul>
+                        <li class="mb-1">
+                            <a href="#" class="nav-item flex items-center p-2 rounded hover:bg-blue-700" onclick="showDashboard()">
+                                <i class="fas fa-tachometer-alt mr-3"></i>
+                                <span class="nav-text">Tableau de bord</span>
+                            </a>
+                        </li>
+                        <li class="mb-1">
+                            <a href="#" class="nav-item flex items-center p-2 rounded hover:bg-blue-700" onclick="showStudents()">
+                                <i class="fas fa-users mr-3"></i>
+                                <span class="nav-text">Étudiants</span>
+                            </a>
+                        </li>
+                        <li class="mb-1">
+                            <a href="#" class="nav-item flex items-center p-2 rounded hover:bg-blue-700" onclick="showTeachers()">
+                                <i class="fas fa-chalkboard-teacher mr-3"></i>
+                                <span class="nav-text">Enseignants</span>
+                            </a>
+                        </li>
+                        <li class="mb-1">
+                            <a href="#" class="nav-item flex items-center p-2 rounded hover:bg-blue-700" onclick="showTimetables()">
+                                <i class="fas fa-calendar-alt mr-3"></i>
+                                <span class="nav-text">Emplois du temps</span>
+                            </a>
+                        </li>
+                        <li class="mb-1">
+                            <a href="#" class="nav-item flex items-center p-2 rounded hover:bg-blue-700" onclick="showCalendar()">
+                                <i class="fas fa-calendar-day mr-3"></i>
+                                <span class="nav-text">Éphéméride</span>
+                            </a>
+                        </li>
+                        <li class="mb-1">
+                            <a href="#" class="nav-item flex items-center p-2 rounded hover:bg-blue-700" onclick="showExams()">
+                                <i class="fas fa-file-alt mr-3"></i>
+                                <span class="nav-text">Examens</span>
+                            </a>
+                        </li>
+                        <li class="mb-1">
+                            <a href="#" class="nav-item flex items-center p-2 rounded hover:bg-blue-700" onclick="showGrades()">
+                                <i class="fas fa-star mr-3"></i>
+                                <span class="nav-text">Notes</span>
+                            </a>
+                        </li>
+                        <li class="mb-1">
+                            <a href="#" class="nav-item flex items-center p-2 rounded hover:bg-blue-700" onclick="showTuitions()">
+                                <i class="fas fa-money-bill-wave mr-3"></i>
+                                <span class="nav-text">Écolages</span>
+                            </a>
+                        </li>
+                        <li class="mb-1">
+                            <a href="#" class="nav-item flex items-center p-2 rounded hover:bg-blue-700" onclick="showPrograms()">
+                                <i class="fas fa-book mr-3"></i>
+                                <span class="nav-text">Programmes</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="px-4 py-2 mt-4">
+                    <div class="text-xs uppercase text-blue-200 mb-2">Administration</div>
+                    <ul>
+                        <li class="mb-1">
+                            <a href="#" class="nav-item flex items-center p-2 rounded hover:bg-blue-700" onclick="showUsers()">
+                                <i class="fas fa-user-cog mr-3"></i>
+                                <span class="nav-text">Utilisateurs</span>
+                            </a>
+                        </li>
+                        <li class="mb-1">
+                            <a href="#" class="nav-item flex items-center p-2 rounded hover:bg-blue-700" onclick="showSettings()">
+                                <i class="fas fa-cog mr-3"></i>
+                                <span class="nav-text">Paramètres</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="p-4 border-t border-blue-700">
+                <div class="flex items-center">
+                    <div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center mr-2">
+                        <i class="fas fa-user text-sm"></i>
+                    </div>
+                    <div>
+                        <div class="text-sm font-medium">Admin User</div>
+                        <div class="text-xs text-blue-200">Administrateur</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="content flex-1 flex flex-col overflow-hidden" id="main-content">
+            <!-- Top Navigation -->
+            <header class="bg-white shadow-sm py-4 px-6 flex items-center justify-between">
+                <div class="flex items-center">
+                    <button class="mr-4 text-gray-600" onclick="toggleSidebar()">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h1 class="text-xl font-semibold text-gray-800" id="page-title">Tableau de bord</h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <button class="text-gray-600 hover:text-gray-900">
+                            <i class="fas fa-bell"></i>
+                            <span class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span>
+                        </button>
+                    </div>
+                    <div class="relative">
+                        <button class="text-gray-600 hover:text-gray-900">
+                            <i class="fas fa-envelope"></i>
+                            <span class="absolute top-0 right-0 w-2 h-2 bg-blue-500 rounded-full"></span>
+                        </button>
+                    </div>
+                    <div class="border-l border-gray-200 h-8"></div>
+                    <div class="flex items-center">
+                        <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center mr-2">
+                            <i class="fas fa-user text-blue-600"></i>
+                        </div>
+                        <span class="text-sm font-medium">Admin User</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Page Content -->
+            <main class="flex-1 overflow-y-auto p-6 bg-gray-50" id="page-content">
+                <!-- Dashboard Content -->
+                <div id="dashboard-content">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                        <div class="bg-white rounded-lg shadow p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-gray-500">Étudiants</p>
+                                    <h3 class="text-2xl font-bold">1,248</h3>
+                                </div>
+                                <div class="p-3 rounded-full bg-blue-100 text-blue-600">
+                                    <i class="fas fa-users text-xl"></i>
+                                </div>
+                            </div>
+                            <div class="mt-4">
+                                <span class="text-green-500 text-sm font-medium">+12%</span>
+                                <span class="text-gray-500 text-sm ml-2">depuis le mois dernier</span>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-lg shadow p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-gray-500">Enseignants</p>
+                                    <h3 class="text-2xl font-bold">84</h3>
+                                </div>
+                                <div class="p-3 rounded-full bg-green-100 text-green-600">
+                                    <i class="fas fa-chalkboard-teacher text-xl"></i>
+                                </div>
+                            </div>
+                            <div class="mt-4">
+                                <span class="text-green-500 text-sm font-medium">+5%</span>
+                                <span class="text-gray-500 text-sm ml-2">depuis le mois dernier</span>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-lg shadow p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-gray-500">Paiements</p>
+                                    <h3 class="text-2xl font-bold">1,045,500 MGA</h3>
+                                </div>
+                                <div class="p-3 rounded-full bg-yellow-100 text-yellow-600">
+                                    <i class="fas fa-money-bill-wave text-xl"></i>
+                                </div>
+                            </div>
+                            <div class="mt-4">
+                                <span class="text-green-500 text-sm font-medium">+18%</span>
+                                <span class="text-gray-500 text-sm ml-2">depuis le mois dernier</span>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-lg shadow p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-gray-500">Examens à venir</p>
+                                    <h3 class="text-2xl font-bold">7</h3>
+                                </div>
+                                <div class="p-3 rounded-full bg-red-100 text-red-600">
+                                    <i class="fas fa-file-alt text-xl"></i>
+                                </div>
+                            </div>
+                            <div class="mt-4">
+                                <span class="text-gray-500 text-sm">Prochain examen dans 3 jours</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+                        <div class="bg-white rounded-lg shadow p-6 lg:col-span-2">
+                            <div class="flex items-center justify-between mb-4">
+                                <h2 class="text-lg font-semibold">Activité récente</h2>
+                                <button class="text-blue-600 text-sm font-medium">Voir tout</button>
+                            </div>
+                            <div class="space-y-4">
+                                <div class="flex items-start">
+                                    <div class="p-2 rounded-full bg-blue-100 text-blue-600 mr-3">
+                                        <i class="fas fa-user-graduate"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-medium">Nouvel étudiant inscrit</p>
+                                        <p class="text-gray-500 text-sm">Jean Dupont s'est inscrit en Licence TIC</p>
+                                        <p class="text-gray-400 text-xs mt-1">Il y a 2 heures</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start">
+                                    <div class="p-2 rounded-full bg-green-100 text-green-600 mr-3">
+                                        <i class="fas fa-money-bill-wave"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-medium">Paiement reçu</p>
+                                        <p class="text-gray-500 text-sm">Marie Rabe a payé son écolage pour Mars</p>
+                                        <p class="text-gray-400 text-xs mt-1">Il y a 5 heures</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start">
+                                    <div class="p-2 rounded-full bg-purple-100 text-purple-600 mr-3">
+                                        <i class="fas fa-file-alt"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-medium">Nouvel examen programmé</p>
+                                        <p class="text-gray-500 text-sm">Examen de Production Audio prévu le 15/04</p>
+                                        <p class="text-gray-400 text-xs mt-1">Il y a 1 jour</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start">
+                                    <div class="p-2 rounded-full bg-yellow-100 text-yellow-600 mr-3">
+                                        <i class="fas fa-calendar-alt"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-medium">Emploi du temps modifié</p>
+                                        <p class="text-gray-500 text-sm">Modification de l'emploi du temps pour la vague 2</p>
+                                        <p class="text-gray-400 text-xs mt-1">Il y a 2 jours</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-lg shadow p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <h2 class="text-lg font-semibold">Événements à venir</h2>
+                                <button class="text-blue-600 text-sm font-medium">Voir calendrier</button>
+                            </div>
+                            <div class="space-y-4">
+                                <div class="p-3 border-l-4 border-blue-500 bg-blue-50 rounded">
+                                    <p class="font-medium">Réunion des enseignants</p>
+                                    <p class="text-gray-500 text-sm">10/04/2023 - 14h00</p>
+                                </div>
+                                <div class="p-3 border-l-4 border-green-500 bg-green-50 rounded">
+                                    <p class="font-medium">Date limite paiement</p>
+                                    <p class="text-gray-500 text-sm">12/04/2023 - Toute la journée</p>
+                                </div>
+                                <div class="p-3 border-l-4 border-purple-500 bg-purple-50 rounded">
+                                    <p class="font-medium">Examen Production Audio</p>
+                                    <p class="text-gray-500 text-sm">15/04/2023 - 08h00-12h00</p>
+                                </div>
+                                <div class="p-3 border-l-4 border-red-500 bg-red-50 rounded">
+                                    <p class="font-medium">Vacances scolaires</p>
+                                    <p class="text-gray-500 text-sm">20/04/2023 au 30/04/2023</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-lg shadow p-6 mb-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h2 class="text-lg font-semibold">Statistiques des programmes</h2>
+                            <div class="flex space-x-2">
+                                <button class="px-3 py-1 bg-blue-100 text-blue-600 rounded-full text-sm">Mensuel</button>
+                                <button class="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-sm">Annuel</button>
+                            </div>
+                        </div>
+                        <div class="h-64">
+                            <canvas id="programChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Students Content -->
+                <div id="students-content" class="hidden">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-bold">Gestion des Étudiants</h2>
+                        <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded flex items-center" onclick="showAddStudentModal()">
+                            <i class="fas fa-plus mr-2"></i> Ajouter un étudiant
+                        </button>
+                    </div>
+
+                    <div class="bg-white rounded-lg shadow overflow-hidden mb-6">
+                        <div class="p-4 border-b border-gray-200">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-4">
+                                    <div class="relative w-64">
+                                        <input type="text" placeholder="Rechercher un étudiant..." class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                        <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                                    </div>
+                                    <select class="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                        <option>Tous les programmes</option>
+                                        <option>CFP SON</option>
+                                        <option>CFP SONO</option>
+                                        <option>CFP IMAGE</option>
+                                        <option>CFP WEB</option>
+                                        <option>DTS</option>
+                                        <option>Licence TIC</option>
+                                        <option>Licence MDJ</option>
+                                        <option>Master IEE</option>
+                                        <option>Master AC</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <button class="text-gray-600 hover:text-gray-900 p-2 rounded-full">
+                                        <i class="fas fa-filter"></i>
+                                    </button>
+                                    <button class="text-gray-600 hover:text-gray-900 p-2 rounded-full">
+                                        <i class="fas fa-download"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Photo</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nom</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Programme</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Vague</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200">
+                                    <tr class="hover:bg-gray-50">
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">EM2023001</td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="w-8 h-8 rounded-full bg-gray-200 overflow-hidden">
+                                                <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="" class="w-full h-full object-cover">
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm font-medium text-gray-900">Sarah Johnson</div>
+                                            <div class="text-sm text-gray-500">sarah.j@example.com</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Master AC</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Vague 1</td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Actif</span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                            <button class="text-blue-600 hover:text-blue-900 mr-3" onclick="showStudentDetails('EM2023001')"><i class="fas fa-eye"></i></button>
+                                            <button class="text-yellow-600 hover:text-yellow-900 mr-3"><i class="fas fa-edit"></i></button>
+                                            <button class="text-red-600 hover:text-red-900"><i class="fas fa-trash"></i></button>
+                                        </td>
+                                    </tr>
+                                    <tr class="hover:bg-gray-50">
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">EM2023002</td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="w-8 h-8 rounded-full bg-gray-200 overflow-hidden">
+                                                <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="" class="w-full h-full object-cover">
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm font-medium text-gray-900">Michael Brown</div>
+                                            <div class="text-sm text-gray-500">michael.b@example.com</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">CFP SON</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Vague 2</td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Actif</span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                            <button class="text-blue-600 hover:text-blue-900 mr-3" onclick="showStudentDetails('EM2023002')"><i class="fas fa-eye"></i></button>
+                                            <button class="text-yellow-600 hover:text-yellow-900 mr-3"><i class="fas fa-edit"></i></button>
+                                            <button class="text-red-600 hover:text-red-900"><i class="fas fa-trash"></i></button>
+                                        </td>
+                                    </tr>
+                                    <tr class="hover:bg-gray-50">
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">EM2023003</td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="w-8 h-8 rounded-full bg-gray-200 overflow-hidden">
+                                                <img src="https://randomuser.me/api/portraits/women/68.jpg" alt="" class="w-full h-full object-cover">
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm font-medium text-gray-900">Jessica Davis</div>
+                                            <div class="text-sm text-gray-500">jessica.d@example.com</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Licence TIC</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Vague 1</td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">En attente</span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                            <button class="text-blue-600 hover:text-blue-900 mr-3" onclick="showStudentDetails('EM2023003')"><i class="fas fa-eye"></i></button>
+                                            <button class="text-yellow-600 hover:text-yellow-900 mr-3"><i class="fas fa-edit"></i></button>
+                                            <button class="text-red-600 hover:text-red-900"><i class="fas fa-trash"></i></button>
+                                        </td>
+                                    </tr>
+                                    <tr class="hover:bg-gray-50">
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">EM2023004</td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="w-8 h-8 rounded-full bg-gray-200 overflow-hidden">
+                                                <img src="https://randomuser.me/api/portraits/men/75.jpg" alt="" class="w-full h-full object-cover">
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm font-medium text-gray-900">Robert Wilson</div>
+                                            <div class="text-sm text-gray-500">robert.w@example.com</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">CFP WEB</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Vague 3</td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Inactif</span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                            <button class="text-blue-600 hover:text-blue-900 mr-3" onclick="showStudentDetails('EM2023004')"><i class="fas fa-eye"></i></button>
+                                            <button class="text-yellow-600 hover:text-yellow-900 mr-3"><i class="fas fa-edit"></i></button>
+                                            <button class="text-red-600 hover:text-red-900"><i class="fas fa-trash"></i></button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="bg-gray-50 px-6 py-3 flex items-center justify-between border-t border-gray-200">
+                            <div class="flex-1 flex justify-between sm:hidden">
+                                <a href="#" class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">Précédent</a>
+                                <a href="#" class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">Suivant</a>
+                            </div>
+                            <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+                                <div>
+                                    <p class="text-sm text-gray-700">
+                                        Affichage de <span class="font-medium">1</span> à <span class="font-medium">4</span> sur <span class="font-medium">1248</span> étudiants
+                                    </p>
+                                </div>
+                                <div>
+                                    <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                                        <a href="#" class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                            <span class="sr-only">Précédent</span>
+                                            <i class="fas fa-chevron-left"></i>
+                                        </a>
+                                        <a href="#" aria-current="page" class="z-10 bg-blue-50 border-blue-500 text-blue-600 relative inline-flex items-center px-4 py-2 border text-sm font-medium">1</a>
+                                        <a href="#" class="bg-white border-gray-300 text-gray-500 hover:bg-gray-50 relative inline-flex items-center px-4 py-2 border text-sm font-medium">2</a>
+                                        <a href="#" class="bg-white border-gray-300 text-gray-500 hover:bg-gray-50 relative inline-flex items-center px-4 py-2 border text-sm font-medium">3</a>
+                                        <a href="#" class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                            <span class="sr-only">Suivant</span>
+                                            <i class="fas fa-chevron-right"></i>
+                                        </a>
+                                    </nav>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Teachers Content -->
+                <div id="teachers-content" class="hidden">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-bold">Gestion des Enseignants</h2>
+                        <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded flex items-center">
+                            <i class="fas fa-plus mr-2"></i> Ajouter un enseignant
+                        </button>
+                    </div>
+
+                    <div class="bg-white rounded-lg shadow overflow-hidden mb-6">
+                        <div class="p-4 border-b border-gray-200">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-4">
+                                    <div class="relative w-64">
+                                        <input type="text" placeholder="Rechercher un enseignant..." class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                        <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                                    </div>
+                                    <select class="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                        <option>Toutes les matières</option>
+                                        <option>Production Audio</option>
+                                        <option>Sonorisation</option>
+                                        <option>Cinématographie</option>
+                                        <option>Photographie</option>
+                                        <option>3D</option>
+                                        <option>Développement Web</option>
+                                        <option>Marketing Digital</option>
+                                        <option>Journalisme</option>
+                                        <option>Droit</option>
+                                        <option>Management</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <button class="text-gray-600 hover:text-gray-900 p-2 rounded-full">
+                                        <i class="fas fa-filter"></i>
+                                    </button>
+                                    <button class="text-gray-600 hover:text-gray-900 p-2 rounded-full">
+                                        <i class="fas fa-download"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Photo</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nom</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Matières</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200">
+                                    <tr class="hover:bg-gray-50">
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">EMP2023001</td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="w-8 h-8 rounded-full bg-gray-200 overflow-hidden">
+                                                <img src="https://randomuser.me/api/portraits/men/86.jpg" alt="" class="w-full h-full object-cover">
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm font-medium text-gray-900">Prof. David Miller</div>
+                                            <div class="text-sm text-gray-500">david.m@example.com</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="flex flex-wrap gap-1">
+                                                <span class="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800">Production Audio</span>
+                                                <span class="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800">MAO</span>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Actif</span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                            <button class="text-blue-600 hover:text-blue-900 mr-3"><i class="fas fa-eye"></i></button>
+                                            <button class="text-yellow-600 hover:text-yellow-900 mr-3"><i class="fas fa-edit"></i></button>
+                                            <button class="text-red-600 hover:text-red-900"><i class="fas fa-trash"></i></button>
+                                        </td>
+                                    </tr>
+                                    <tr class="hover:bg-gray-50">
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">EMP2023002</td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="w-8 h-8 rounded-full bg-gray-200 overflow-hidden">
+                                                <img src="https://randomuser.me/api/portraits/women/65.jpg" alt="" class="w-full h-full object-cover">
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm font-medium text-gray-900">Prof. Laura Wilson</div>
+                                            <div class="text-sm text-gray-500">laura.w@example.com</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="flex flex-wrap gap-1">
+                                                <span class="px-2 py-1 text-xs rounded-full bg-purple-100 text-purple-800">Cinématographie</span>
+                                                <span class="px-2 py-1 text-xs rounded-full bg-purple-100 text-purple-800">Post-Production</span>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Actif</span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                            <button class="text-blue-600 hover:text-blue-900 mr-3"><i class="fas fa-eye"></i></button>
+                                            <button class="text-yellow-600 hover:text-yellow-900 mr-3"><i class="fas fa-edit"></i></button>
+                                            <button class="text-red-600 hover:text-red-900"><i class="fas fa-trash"></i></button>
+                                        </td>
+                                    </tr>
+                                    <tr class="hover:bg-gray-50">
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">EMP2023003</td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="w-8 h-8 rounded-full bg-gray-200 overflow-hidden">
+                                                <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="" class="w-full h-full object-cover">
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm font-medium text-gray-900">Prof. James Taylor</div>
+                                            <div class="text-sm text-gray-500">james.t@example.com</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="flex flex-wrap gap-1">
+                                                <span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">Développement Web</span>
+                                                <span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">Multimédia</span>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Vacances</span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                            <button class="text-blue-600 hover:text-blue-900 mr-3"><i class="fas fa-eye"></i></button>
+                                            <button class="text-yellow-600 hover:text-yellow-900 mr-3"><i class="fas fa-edit"></i></button>
+                                            <button class="text-red-600 hover:text-red-900"><i class="fas fa-trash"></i></button>
+                                        </td>
+                                    </tr>
+                                    <tr class="hover:bg-gray-50">
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">EMP2023004</td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="w-8 h-8 rounded-full bg-gray-200 overflow-hidden">
+                                                <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="" class="w-full h-full object-cover">
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm font-medium text-gray-900">Prof. Sarah Johnson</div>
+                                            <div class="text-sm text-gray-500">sarah.j@example.com</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="flex flex-wrap gap-1">
+                                                <span class="px-2 py-1 text-xs rounded-full bg-red-100 text-red-800">Marketing Digital</span>
+                                                <span class="px-2 py-1 text-xs rounded-full bg-red-100 text-red-800">Journalisme</span>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Actif</span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                            <button class="text-blue-600 hover:text-blue-900 mr-3"><i class="fas fa-eye"></i></button>
+                                            <button class="text-yellow-600 hover:text-yellow-900 mr-3"><i class="fas fa-edit"></i></button>
+                                            <button class="text-red-600 hover:text-red-900"><i class="fas fa-trash"></i></button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="bg-gray-50 px-6 py-3 flex items-center justify-between border-t border-gray-200">
+                            <div class="flex-1 flex justify-between sm:hidden">
+                                <a href="#" class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">Précédent</a>
+                                <a href="#" class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">Suivant</a>
+                            </div>
+                            <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+                                <div>
+                                    <p class="text-sm text-gray-700">
+                                        Affichage de <span class="font-medium">1</span> à <span class="font-medium">4</span> sur <span class="font-medium">84</span> enseignants
+                                    </p>
+                                </div>
+                                <div>
+                                    <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                                        <a href="#" class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                            <span class="sr-only">Précédent</span>
+                                            <i class="fas fa-chevron-left"></i>
+                                        </a>
+                                        <a href="#" aria-current="page" class="z-10 bg-blue-50 border-blue-500 text-blue-600 relative inline-flex items-center px-4 py-2 border text-sm font-medium">1</a>
+                                        <a href="#" class="bg-white border-gray-300 text-gray-500 hover:bg-gray-50 relative inline-flex items-center px-4 py-2 border text-sm font-medium">2</a>
+                                        <a href="#" class="bg-white border-gray-300 text-gray-500 hover:bg-gray-50 relative inline-flex items-center px-4 py-2 border text-sm font-medium">3</a>
+                                        <a href="#" class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                            <span class="sr-only">Suivant</span>
+                                            <i class="fas fa-chevron-right"></i>
+                                        </a>
+                                    </nav>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Timetables Content -->
+                <div id="timetables-content" class="hidden">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-bold">Gestion des Emplois du Temps</h2>
+                        <div class="flex space-x-3">
+                            <select class="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option>Vague 1</option>
+                                <option>Vague 2</option>
+                                <option>Vague 3</option>
+                            </select>
+                            <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded flex items-center">
+                                <i class="fas fa-plus mr-2"></i> Créer un emploi du temps
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-lg shadow overflow-hidden mb-6">
+                        <div class="p-4 border-b border-gray-200">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-4">
+                                    <div class="relative">
+                                        <input type="date" class="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    </div>
+                                    <select class="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                        <option>Tous les programmes</option>
+                                        <option>CFP SON</option>
+                                        <option>CFP SONO</option>
+                                        <option>CFP IMAGE</option>
+                                        <option>CFP WEB</option>
+                                        <option>DTS</option>
+                                        <option>Licence TIC</option>
+                                        <option>Licence MDJ</option>
+                                        <option>Master IEE</option>
+                                        <option>Master AC</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <button class="text-gray-600 hover:text-gray-900 p-2 rounded-full">
+                                        <i class="fas fa-print"></i>
+                                    </button>
+                                    <button class="text-gray-600 hover:text-gray-900 p-2 rounded-full">
+                                        <i class="fas fa-download"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Heure</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Lundi</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mardi</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mercredi</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Jeudi</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Vendredi</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Samedi</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200">
+                                    <tr>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">08h00 - 10h00</td>
+                                        <td class="px-6 py-4">
+                                            <div class="bg-blue-50 p-2 rounded">
+                                                <p class="text-sm font-medium">Production Audio</p>
+                                                <p class="text-xs text-gray-500">Prof. David Miller</p>
+                                                <p class="text-xs text-gray-500">Salle A12</p>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <div class="bg-purple-50 p-2 rounded">
+                                                <p class="text-sm font-medium">Cinématographie</p>
+                                                <p class="text-xs text-gray-500">Prof. Laura Wilson</p>
+                                                <p class="text-xs text-gray-500">Salle B05</p>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4"></td>
+                                        <td class="px-6 py-4">
+                                            <div class="bg-green-50 p-2 rounded">
+                                                <p class="text-sm font-medium">Développement Web</p>
+                                                <p class="text-xs text-gray-500">Prof. James Taylor</p>
+                                                <p class="text-xs text-gray-500">Salle C03</p>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4"></td>
+                                        <td class="px-6 py-4">
+                                            <div class="bg-red-50 p-2 rounded">
+                                                <p class="text-sm font-medium">Marketing Digital</p>
+                                                <p class="text-xs text-gray-500">Prof. Sarah Johnson</p>
+                                                <p class="text-xs text-gray-500">Salle A08</p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">10h00 - 12h00</td>
+                                        <td class="px-6 py-4"></td>
+                                        <td class="px-6 py-4">
+                                            <div class="bg-blue-50 p-2 rounded">
+                                                <p class="text-sm font-medium">MAO</p>
+                                                <p class="text-xs text-gray-500">Prof. David Miller</p>
+                                                <p class="text-xs text-gray-500">Salle A12</p>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <div class="bg-purple-50 p-2 rounded">
+                                                <p class="text-sm font-medium">Post-Production</p>
+                                                <p class="text-xs text-gray-500">Prof. Laura Wilson</p>
+                                                <p class="text-xs text-gray-500">Salle B05</p>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4"></td>
+                                        <td class="px-6 py-4">
+                                            <div class="bg-green-50 p-2 rounded">
+                                                <p class="text-sm font-medium">Multimédia</p>
+                                                <p class="text-xs text-gray-500">Prof. James Taylor</p>
+                                                <p class="text-xs text-gray-500">Salle C03</p>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4"></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">13h00 - 15h00</td>
+                                        <td class="px-6 py-4">
+                                            <div class="bg-red-50 p-2 rounded">
+                                                <p class="text-sm font-medium">Journalisme</p>
+                                                <p class="text-xs text-gray-500">Prof. Sarah Johnson</p>
+                                                <p class="text-xs text-gray-500">Salle A08</p>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4"></td>
+                                        <td class="px-6 py-4">
+                                            <div class="bg-blue-50 p-2 rounded">
+                                                <p class="text-sm font-medium">Sonorisation</p>
+                                                <p class="text-xs text-gray-500">Prof. David Miller</p>
+                                                <p class="text-xs text-gray-500">Salle A12</p>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <div class="bg-purple-50 p-2 rounded">
+                                                <p class="text-sm font-medium">Photographie</p>
+                                                <p class="text-xs text-gray-500">Prof. Laura Wilson</p>
+                                                <p class="text-xs text-gray-500">Salle B05</p>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4"></td>
+                                        <td class="px-6 py-4"></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">15h00 - 17h00</td>
+                                        <td class="px-6 py-4"></td>
+                                        <td class="px-6 py-4">
+                                            <div class="bg-purple-50 p-2 rounded">
+                                                <p class="text-sm font-medium">3D</p>
+                                                <p class="text-xs text-gray-500">Prof. Laura Wilson</p>
+                                                <p class="text-xs text-gray-500">Salle B05</p>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4"></td>
+                                        <td class="px-6 py-4">
+                                            <div class="bg-red-50 p-2 rounded">
+                                                <p class="text-sm font-medium">Marketing Digital</p>
+                                                <p class="text-xs text-gray-500">Prof. Sarah Johnson</p>
+                                                <p class="text-xs text-gray-500">Salle A08</p>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <div class="bg-green-50 p-2 rounded">
+                                                <p class="text-sm font-medium">Développement Web</p>
+                                                <p class="text-xs text-gray-500">Prof. James Taylor</p>
+                                                <p class="text-xs text-gray-500">Salle C03</p>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Calendar Content -->
+                <div id="calendar-content" class="hidden">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-bold">Éphéméride Académique</h2>
+                        <div class="flex space-x-3">
+                            <select class="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option>Semestre 1 (S1)</option>
+                                <option>Semestre 2 (S2)</option>
+                                <option>Vacances</option>
+                                <option>Session Mémoire</option>
+                            </select>
+                            <button class="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded flex items-center">
+                                <i class="fas fa-chevron-left mr-2"></i> Précédent
+                            </button>
+                            <h3 class="text-xl font-semibold flex items-center">Cycle Licence (L1-L3)</h3>
+                            <button class="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded flex items-center">
+                                Suivant <i class="fas fa-chevron-right ml-2"></i>
+                            </button>
+                            <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded flex items-center">
+                                <i class="fas fa-plus mr-2"></i> Ajouter un événement
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-lg shadow overflow-hidden mb-6">
+                        <div class="grid grid-cols-7 gap-px bg-gray-200">
+                            <div class="bg-gray-100 py-2 text-center font-medium text-gray-700">Lundi</div>
+                            <div class="bg-gray-100 py-2 text-center font-medium text-gray-700">Mardi</div>
+                            <div class="bg-gray-100 py-2 text-center font-medium text-gray-700">Mercredi</div>
+                            <div class="bg-gray-100 py-2 text-center font-medium text-gray-700">Jeudi</div>
+                            <div class="bg-gray-100 py-2 text-center font-medium text-gray-700">Vendredi</div>
+                            <div class="bg-gray-100 py-2 text-center font-medium text-gray-700">Samedi</div>
+                            <div class="bg-gray-100 py-2 text-center font-medium text-gray-700">Dimanche</div>
+                        </div>
+                        <div class="grid grid-cols-7 gap-px bg-gray-200">
+                            <!-- Empty days for March -->
+                            <div class="bg-white h-32 p-1"></div>
+                            <div class="bg-white h-32 p-1"></div>
+                            <div class="bg-white h-32 p-1"></div>
+                            <div class="bg-white h-32 p-1"></div>
+                            <div class="bg-white h-32 p-1"></div>
+                            <div class="bg-white h-32 p-1"></div>
+                            <div class="bg-white h-32 p-1"></div>
+                            
+                            <!-- April days -->
+                            <div class="bg-white h-32 p-1 calendar-day">
+                                <div class="text-right text-sm mb-1">1</div>
+                            </div>
+                            <div class="bg-white h-32 p-1 calendar-day">
+                                <div class="text-right text-sm mb-1">2</div>
+                            </div>
+                            <div class="bg-white h-32 p-1 calendar-day">
+                                <div class="text-right text-sm mb-1">3</div>
+                            </div>
+                            <div class="bg-white h-32 p-1 calendar-day">
+                                <div class="text-right text-sm mb-1">4</div>
+                            </div>
+                            <div class="bg-white h-32 p-1 calendar-day">
+                                <div class="text-right text-sm mb-1">5</div>
+                            </div>
+                            <div class="bg-white h-32 p-1 calendar-day">
+                                <div class="text-right text-sm mb-1">6</div>
+                            </div>
+                            <div class="bg-white h-32 p-1 calendar-day">
+                                <div class="text-right text-sm mb-1">7</div>
+                            </div>
+                            <div class="bg-white h-32 p-1 calendar-day">
+                                <div class="text-right text-sm mb-1">8</div>
+                            </div>
+                            <div class="bg-white h-32 p-1 calendar-day">
+                                <div class="text-right text-sm mb-1">9</div>
+                            </div>
+                            <div class="bg-white h-32 p-1 has-event calendar-day" onclick="showEventDetails('10')">
+                                <div class="text-right text-sm mb-1">10</div>
+                                <div class="text-xs p-1 bg-blue-100 text-blue-800 rounded mb-1">Réunion enseignants</div>
+                            </div>
+                            <div class="bg-white h-32 p-1 calendar-day">
+                                <div class="text-right text-sm mb-1">11</div>
+                            </div>
+                            <div class="bg-white h-32 p-1 has-event calendar-day" onclick="showEventDetails('12')">
+                                <div class="text-right text-sm mb-1">12</div>
+                                <div class="text-xs p-1 bg-green-100 text-green-800 rounded mb-1">Date limite paiement</div>
+                            </div>
+                            <div class="bg-white h-32 p-1 calendar-day">
+                                <div class="text-right text-sm mb-1">13</div>
+                            </div>
+                            <div class="bg-white h-32 p-1 calendar-day">
+                                <div class="text-right text-sm mb-1">14</div>
+                            </div>
+                            <div class="bg-white h-32 p-1 has-event calendar-day" onclick="showEventDetails('15')">
+                                <div class="text-right text-sm mb-1">15</div>
+                                <div class="text-xs p-1 bg-purple-100 text-purple-800 rounded mb-1">Examen Production Audio</div>
+                            </div>
+                            <div class="bg-white h-32 p-1 calendar-day">
+                                <div class="text-right text-sm mb-1">16</div>
+                            </div>
+                            <div class="bg-white h-32 p-1 calendar-day">
+                                <div class="text-right text-sm mb-1">17</div>
+                            </div>
+                            <div class="bg-white h-32 p-1 calendar-day">
+                                <div class="text-right text-sm mb-1">18</div>
+                            </div>
+                            <div class="bg-white h-32 p-1 calendar-day">
+                                <div class="text-right text-sm mb-1">19</div>
+                            </div>
+                            <div class="bg-white h-32 p-1 has-event calendar-day" onclick="showEventDetails('20')">
+                                <div class="text-right text-sm mb-1">20</div>
+                                <div class="text-xs p-1 bg-red-100 text-red-800 rounded mb-1">Début vacances</div>
+                            </div>
+                            <div class="bg-white h-32 p-1 has-event calendar-day" onclick="showEventDetails('21')">
+                                <div class="text-right text-sm mb-1">21</div>
+                                <div class="text-xs p-1 bg-red-100 text-red-800 rounded mb-1">Vacances</div>
+                            </div>
+                            <div class="bg-white h-32 p-1 has-event calendar-day" onclick="showEventDetails('22')">
+                                <div class="text-right text-sm mb-1">22</div>
+                                <div class="text-xs p-1 bg-red-100 text-red-800 rounded mb-1">Vacances</div>
+                            </div>
+                            <div class="bg-white h-32 p-1 has-event calendar-day" onclick="showEventDetails('23')">
+                                <div class="text-right text-sm mb-1">23</div>
+                                <div class="text-xs p-1 bg-red-100 text-red-800 rounded mb-1">Vacances</div>
+                            </div>
+                            <div class="bg-white h-32 p-1 has-event calendar-day" onclick="showEventDetails('24')">
+                                <div class="text-right text-sm mb-1">24</div>
+                                <div class="text-xs p-1 bg-red-100 text-red-800 rounded mb-1">Vacances</div>
+                            </div>
+                            <div class="bg-white h-32 p-1 has-event calendar-day" onclick="showEventDetails('25')">
+                                <div class="text-right text-sm mb-1">25</div>
+                                <div class="text-xs p-1 bg-red-100 text-red-800 rounded mb-1">Vacances</div>
+                            </div>
+                            <div class="bg-white h-32 p-1 has-event calendar-day" onclick="showEventDetails('26')">
+                                <div class="text-right text-sm mb-1">26</div>
+                                <div class="text-xs p-1 bg-red-100 text-red-800 rounded mb-1">Vacances</div>
+                            </div>
+                            <div class="bg-white h-32 p-1 has-event calendar-day" onclick="showEventDetails('27')">
+                                <div class="text-right text-sm mb-1">27</div>
+                                <div class="text-xs p-1 bg-red-100 text-red-800 rounded mb-1">Vacances</div>
+                            </div>
+                            <div class="bg-white h-32 p-1 has-event calendar-day" onclick="showEventDetails('28')">
+                                <div class="text-right text-sm mb-1">28</div>
+                                <div class="text-xs p-1 bg-red-100 text-red-800 rounded mb-1">Vacances</div>
+                            </div>
+                            <div class="bg-white h-32 p-1 has-event calendar-day" onclick="showEventDetails('29')">
+                                <div class="text-right text-sm mb-1">29</div>
+                                <div class="text-xs p-1 bg-red-100 text-red-800 rounded mb-1">Vacances</div>
+                            </div>
+                            <!-- Session Mémoire Mars -->
+                            <div class="bg-white h-32 p-1 has-event calendar-day" onclick="showEventDetails('1')">
+                                <div class="text-right text-sm mb-1">1</div>
+                                <div class="text-xs p-1 bg-indigo-100 text-indigo-800 rounded mb-1">Début session mémoire</div>
+                            </div>
+                            <div class="bg-white h-32 p-1 has-event calendar-day" onclick="showEventDetails('15')">
+                                <div class="text-right text-sm mb-1">15</div>
+                                <div class="text-xs p-1 bg-indigo-100 text-indigo-800 rounded mb-1">Fin session mémoire</div>
+                            </div>
+
+                            <!-- Session Mémoire Juin -->
+                            <div class="bg-white h-32 p-1 has-event calendar-day" onclick="showEventDetails('1')">
+                                <div class="text-right text-sm mb-1">1</div>
+                                <div class="text-xs p-1 bg-indigo-100 text-indigo-800 rounded mb-1">Début session mémoire</div>
+                            </div>
+                            <div class="bg-white h-32 p-1 has-event calendar-day" onclick="showEventDetails('15')">
+                                <div class="text-right text-sm mb-1">15</div>
+                                <div class="text-xs p-1 bg-indigo-100 text-indigo-800 rounded mb-1">Fin session mémoire</div>
+                            </div>
+
+                            <!-- Session Mémoire Septembre -->
+                            <div class="bg-white h-32 p-1 has-event calendar-day" onclick="showEventDetails('1')">
+                                <div class="text-right text-sm mb-1">1</div>
+                                <div class="text-xs p-1 bg-indigo-100 text-indigo-800 rounded mb-1">Début session mémoire</div>
+                            </div>
+                            <div class="bg-white h-32 p-1 has-event calendar-day" onclick="showEventDetails('20')">
+                                <div class="text-right text-sm mb-1">20</div>
+                                <div class="text-xs p-1 bg-indigo-100 text-indigo-800 rounded mb-1">Fin session mémoire</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-lg shadow p-6">
+                        <h3 class="text-lg font-semibold mb-4">Événements du mois</h3>
+                        <div class="space-y-4">
+                            <div class="p-3 border-l-4 border-blue-500 bg-blue-50 rounded">
+                                <p class="font-medium">10/04/2023 - 14h00</p>
+                                <p class="text-gray-700">Réunion des enseignants</p>
+                                <p class="text-gray-500 text-sm">Salle de conférence principale</p>
+                            </div>
+                            <div class="p-3 border-l-4 border-green-500 bg-green-50 rounded">
+                                <p class="font-medium">12/04/2023 - Toute la journée</p>
+                                <p class="text-gray-700">Date limite paiement</p>
+                                <p class="text-gray-500 text-sm">Pour tous les étudiants</p>
+                            </div>
+                            <div class="p-3 border-l-4 border-purple-500 bg-purple-50 rounded">
+                                <p class="font-medium">15/04/2023 - 08h00-12h00</p>
+                                <p class="text-gray-700">Examen Production Audio</p>
+                                <p class="text-gray-500 text-sm">Salle A12, Vague 1</p>
+                            </div>
+                            <div class="p-3 border-l-4 border-red-500 bg-red-50 rounded">
+                                <p class="font-medium">20/04/2023 au 30/04/2023</p>
+                                <p class="text-gray-700">Vacances scolaires</p>
+                                <p class="text-gray-500 text-sm">Pas de cours pendant cette période</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Exams Content -->
+                <div id="exams-content" class="hidden">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-bold">Gestion des Examens</h2>
+                        <div class="flex space-x-3">
+                            <select class="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option>Tous les programmes</option>
+                                <option>CFP SON</option>
+                                <option>CFP SONO</option>
+                                <option>CFP IMAGE</option>
+                                <option>CFP WEB</option>
+                                <option>DTS</option>
+                                <option>Licence TIC</option>
+                                <option>Licence MDJ</option>
+                                <option>Master IEE</option>
+                                <option>Master AC</option>
+                            </select>
+                            <select class="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option>Tous les statuts</option>
+                                <option>À venir</option>
+                                <option>En cours</option>
+                                <option>Terminé</option>
+                                <option>Annulé</option>
+                            </select>
+                            <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded flex items-center">
+                                <i class="fas fa-plus mr-2"></i> Planifier un examen
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-lg shadow overflow-hidden mb-6">
+                        <div class="p-4 border-b border-gray-200">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-4">
+                                    <div class="relative w-64">
+                                        <input type="text" placeholder="Rechercher un examen..." class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                        <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                                    </div>
+                                    <input type="date" class="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                </div>
+                                <div>
+                                    <button

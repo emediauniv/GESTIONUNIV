@@ -1,10 +1,12 @@
 ---
-title: Emedia Gestion Scolaire
-emoji: 🦀
-colorFrom: gray
-colorTo: yellow
+title: emedia-gestion-scolaire
+emoji: 🐳
+colorFrom: purple
+colorTo: pink
 sdk: static
 pinned: false
+tags:
+  - deepsite
 ---
 
 Check out the configuration reference at https://huggingface.co/docs/hub/spaces-config-reference
