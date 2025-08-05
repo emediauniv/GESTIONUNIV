@@ -1,6 +1,6 @@
+Voici une application complète de gestion d'établissement scolaire pour l'université EMEDIA avec toutes les fonctionnalités demandées :
 
-
-
+```html
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -8,136 +8,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EMEDIA - Gestion Scolaire</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        function handleAttendance(day, hour) {
-            // Ici vous pouvez ajouter la logique pour enregistrer le pointage
-            console.log(`Pointage enregistré pour ${day} à ${hour}`);
-            alert(`Pointage enregistré avec succès pour ${day} à ${hour}`);
-        }
-
-        function printReceipt() {
-            const receiptContent = `
-                <div class="receipt-header">
-                    <img src="logo-emedial.png" alt="EMEDIA Logo" class="receipt-logo">
-                    <div>
-                        <div class="receipt-title">EMEDIA - École des Métiers du Digital et de l'Audiovisuel</div>
-                        <div class="receipt-subtitle">Reçu de paiement d'écolage</div>
-                    </div>
-                </div>
-                <div class="receipt-body">
-                    <div class="receipt-row">
-                        <span class="receipt-label">Numéro de reçu:</span>
-                        <span>REC-${new Date().getFullYear()}-${Math.floor(Math.random() * 10000)}</span>
-                    </div>
-                    <div class="receipt-row">
-                        <span class="receipt-label">Date:</span>
-                        <span>${new Date().toLocaleDateString()}</span>
-                    </div>
-                    <div class="receipt-row">
-                        <span class="receipt-label">Étudiant:</span>
-                        <span id="receipt-student-name">[Nom de l'étudiant]</span>
-                    </div>
-                    <div class="receipt-row">
-                        <span class="receipt-label">Programme:</span>
-                        <span id="receipt-program">[Programme]</span>
-                    </div>
-                    <div class="receipt-row">
-                        <span class="receipt-label">Vague:</span>
-                        <span id="receipt-batch">[Vague]</span>
-                    </div>
-                    <div class="receipt-row">
-                        <span class="receipt-label">Mois payé:</span>
-                        <span id="receipt-month">[Mois]</span>
-                    </div>
-                    <div class="receipt-row">
-                        <span class="receipt-label">Montant:</span>
-                        <span id="receipt-amount">[Montant] MGA</span>
-                    </div>
-                    <div class="receipt-row">
-                        <span class="receipt-label">Mode de paiement:</span>
-                        <span id="receipt-method">[Mode de paiement]</span>
-                    </div>
-                </div>
-                <div class="receipt-footer">
-                    Ce reçu est une preuve de paiement officielle. Merci pour votre confiance.
-                </div>
-            `;
-
-            const printWindow = window.open('', '', 'width=600,height=600');
-            printWindow.document.write(`
-                <html>
-                    <head>
-                        <title>Reçu de paiement EMEDIA</title>
-                        <style>
-                            body { font-family: Arial, sans-serif; padding: 20px; }
-                            ${document.querySelector('style').innerHTML}
-                        </style>
-                    </head>
-                    <body>
-                        ${receiptContent}
-                        <script>
-                            window.onload = function() {
-                                setTimeout(function() {
-                                    window.print();
-                                    window.close();
-                                }, 200);
-                            };
-                        <\/script>
-                    <p style="border-radius: 8px; text-align: center; font-size: 12px; color: #fff; margin-top: 16px;position: fixed; left: 8px; bottom: 8px; z-index: 10; background: rgba(0, 0, 0, 0.8); padding: 4px 8px;">Made with <img src="https://enzostvs-deepsite.hf.space/logo.svg" alt="DeepSite Logo" style="width: 16px; height: 16px; vertical-align: middle;display:inline-block;margin-right:3px;filter:brightness(0) invert(1);"><a href="https://enzostvs-deepsite.hf.space" style="color: #fff;text-decoration: underline;" target="_blank" >DeepSite</a> - 🧬 <a href="https://enzostvs-deepsite.hf.space?remix=Emediauniv/emedia-gestion-scolaire" style="color: #fff;text-decoration: underline;" target="_blank" >Remix</a></p></body>
-                </html>
-            `);
-            printWindow.document.close();
-        }
-    </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        @media print {
-            .receipt-header {
-                display: flex;
-                align-items: center;
-                margin-bottom: 20px;
-                padding-bottom: 10px;
-                border-bottom: 2px solid #1e40af;
-            }
-            .receipt-logo {
-                width: 80px;
-                height: 80px;
-                margin-right: 20px;
-            }
-            .receipt-title {
-                font-size: 24px;
-                font-weight: bold;
-                color: #1e40af;
-            }
-            .receipt-subtitle {
-                font-size: 14px;
-                color: #6b7280;
-            }
-            .receipt-body {
-                margin: 30px 0;
-            }
-            .receipt-row {
-                display: flex;
-                justify-content: space-between;
-                margin-bottom: 10px;
-            }
-            .receipt-label {
-                font-weight: bold;
-                color: #374151;
-            }
-            .receipt-footer {
-                margin-top: 30px;
-                padding-top: 10px;
-                border-top: 1px dashed #9ca3af;
-                text-align: center;
-                font-size: 12px;
-                color: #6b7280;
-            }
-            .no-print {
-                display: none;
-            }
-        }
-        
         .sidebar {
             transition: all 0.3s ease;
         }
@@ -189,13 +61,6 @@
         }
         .grade-cell:hover {
             background-color: #F3F4F6;
-        }
-        .attendance-btn {
-            transition: all 0.2s;
-        }
-        .attendance-btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
         .avatar-upload {
             position: relative;
@@ -887,8 +752,8 @@
                                 <option>Vague 2</option>
                                 <option>Vague 3</option>
                             </select>
-                            <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded flex items-center" onclick="printReceipt()">
-                                <i class="fas fa-print mr-2"></i> Imprimer le reçu
+                            <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded flex items-center">
+                                <i class="fas fa-plus mr-2"></i> Créer un emploi du temps
                             </button>
                         </div>
                     </div>
@@ -929,17 +794,11 @@
                                     <tr>
                                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Heure</th>
                                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Lundi</th>
-                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pointage</th>
                                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mardi</th>
-                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pointage</th>
                                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mercredi</th>
-                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pointage</th>
                                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Jeudi</th>
-                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pointage</th>
                                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Vendredi</th>
-                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pointage</th>
                                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Samedi</th>
-                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pointage</th>
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white divide-y divide-gray-200">
@@ -950,14 +809,6 @@
                                                 <p class="text-sm font-medium">Production Audio</p>
                                                 <p class="text-xs text-gray-500">Prof. David Miller</p>
                                                 <p class="text-xs text-gray-500">Salle A12</p>
-                                                <p class="text-xs text-blue-600 font-medium">Début: 08h00</p>
-                                            </div>
-                                        </td>
-                                        <td class="px-6 py-4">
-                                            <div class="bg-white p-2 rounded border border-gray-200">
-                                                <p class="text-xs text-gray-500">Présence prof: <span class="text-green-600 font-medium">Oui</span></p>
-                                                <p class="text-xs text-gray-500">Étudiants: <span class="font-medium">24/30</span></p>
-                                                <button class="mt-1 text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded hover:bg-blue-200">Pointer</button>
                                             </div>
                                         </td>
                                         <td class="px-6 py-4">
